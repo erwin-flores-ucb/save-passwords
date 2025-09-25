@@ -6,6 +6,7 @@ import { changeMasterPassword } from './changeMasterPassword';
 import fs from 'fs';
 import path from 'path';
 import { generateKeyPair } from './cryptoUtils';
+import { findPasswordByService } from './listPasswords';
 
 const rl = readline.createInterface({
   input: process.stdin,
@@ -65,8 +66,18 @@ function mainMenu() {
         });
         break;
       case '3':
-        console.log('Función para buscar contraseña por servicio');
-        break;
+        rl.question('Ingrese el nombre del servicio: ', (service) => {
+          rl.question('Ingrese la contraseña maestra: ', (masterPassword) => {
+            const result = findPasswordByService(service, masterPassword);
+            if (result) {
+              console.log(`Contraseña encontrada para '${service}':`, result);
+            } else {
+              console.log(`No se encontró ninguna contraseña para el servicio '${service}'.`);
+            }
+            mainMenu();
+          });
+        });
+        return;
       case '4':
         rl.question('Ingrese el nombre del servicio a eliminar: ', (service) => {
           rl.question('Ingrese la contraseña maestra: ', (masterPassword) => {

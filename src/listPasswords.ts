@@ -28,3 +28,30 @@ export function listPasswords(masterPassword: string) {
         return [];
     }
 }
+
+// Implementar la función para buscar contraseñas por servicio
+export function findPasswordByService(service: string, masterPassword: string) {
+    if (!fs.existsSync(PASSWORDS_FILE)) {
+        console.log('No hay contraseñas almacenadas.');
+        return null;
+    }
+
+    const encryptedData = fs.readFileSync(PASSWORDS_FILE, 'utf-8');
+    const privateKey = fs.readFileSync(PRIVATE_KEY_FILE, 'utf-8');
+
+    try {
+        const decryptedData = decryptWithPrivateKey(privateKey, encryptedData, masterPassword);
+        const passwords = JSON.parse(decryptedData);
+        const foundPassword = passwords.find((entry: { service: string }) => entry.service === service);
+
+        if (foundPassword) {
+            return foundPassword;
+        } else {
+            console.log('No se encontró ninguna contraseña para el servicio:', service);
+            return null;
+        }
+    } catch (error) {
+        console.error('Error al descifrar las contraseñas:', error);
+        return null;
+    }
+}
