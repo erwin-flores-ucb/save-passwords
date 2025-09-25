@@ -15,9 +15,6 @@ export function listPasswords(masterPassword: string) {
     const encryptedData = fs.readFileSync(PASSWORDS_FILE, 'utf-8');
     const privateKey = fs.readFileSync(PRIVATE_KEY_FILE, 'utf-8');
 
-    console.log('Clave privada cargada correctamente.');
-    console.log('Passphrase proporcionada:', masterPassword);
-
     try {
         const decryptedData = decryptWithPrivateKey(privateKey, encryptedData, masterPassword);
         const passwords = JSON.parse(decryptedData);
